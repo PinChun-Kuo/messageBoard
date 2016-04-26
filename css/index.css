@@ -1,0 +1,97 @@
+@import url(https://fonts.googleapis.com/css?family=Quicksand);
+/* line 3, ../scss/index.scss */
+body {
+  background: url(../img/bg.jpg) repeat;
+}
+
+/* line 7, ../scss/index.scss */
+#page {
+  width: 75%;
+}
+/* line 9, ../scss/index.scss */
+#page h1 {
+  font-size: 40px;
+  font-family: Quicksand;
+}
+/* line 13, ../scss/index.scss */
+#page .addForm {
+  margin-top: 40px;
+}
+/* line 16, ../scss/index.scss */
+#page .addForm .name .title, #page .addForm .content .title {
+  padding: 0 10px;
+}
+/* line 18, ../scss/index.scss */
+#page .addForm .name .title h4, #page .addForm .content .title h4 {
+  padding-left: 35px;
+  font-family: Quicksand;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+/* line 25, ../scss/index.scss */
+#page .addForm .name #inputName, #page .addForm .content #inputName {
+  padding: 2px 0;
+  border: 2px solid #777;
+  border-radius: 5px;
+  margin: 4px 0;
+  width: 250px;
+  height: 31px;
+  text-indent: 4px;
+}
+/* line 34, ../scss/index.scss */
+#page .addForm .name #inputContent, #page .addForm .content #inputContent {
+  padding: 2px 0;
+  border: 2px solid #777;
+  border-radius: 5px;
+  margin-top: 10px;
+  width: 450px;
+  height: 80px;
+  text-indent: 4px;
+}
+/* line 45, ../scss/index.scss */
+#page button {
+  padding: 5px 10px;
+  border: 1px solid #777;
+  border-radius: 6px;
+  margin: 10px 0;
+  letter-spacing: 4px;
+}
+/* line 52, ../scss/index.scss */
+#page .addBtn {
+  margin-left: 176px;
+  width: 80px;
+}
+/* line 56, ../scss/index.scss */
+#page .editBtn {
+  width: 85px;
+}
+/* line 59, ../scss/index.scss */
+#page .deleteBtn {
+  width: 100px;
+}
+
+/* line 64, ../scss/index.scss */
+#messageList {
+  margin: 30px auto;
+}
+/* line 67, ../scss/index.scss */
+#messageList .MSBoard .indexCol {
+  padding: 5px;
+  width: 80px;
+  font-family: Quicksand;
+  font-size: 24px;
+}
+/* line 73, ../scss/index.scss */
+#messageList .MSBoard .nameCol {
+  padding: 5px 10px;
+  width: 140px;
+  font-family: Quicksand;
+  font-size: 24px;
+}
+/* line 79, ../scss/index.scss */
+#messageList .MSBoard .contentCol {
+  padding: 5px 15px 5px 5px;
+  width: 500px;
+  font-family: Quicksand;
+  font-size: 24px;
+}

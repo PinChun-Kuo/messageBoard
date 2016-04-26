@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  <!--
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  -->
+    <title>Message Board</title>
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+    <script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+    <script src="JS/Mustache.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap/bootstrap.css">
+  </head>
+  <body>
+    <div id="page" class="center-block"></div>
+
+    <script id="MSB_template" type="text/ractive">
+      <h1>&nbsp &nbsp &nbsp Message  &nbsp &nbsp Board</h1>
+      <form class="addForm container-fluid center-block" action="index.html">
+        <div class="name row">
+          <div class="col-md-2 title">
+            <h4>Name : </h4>
+          </div>
+          <div class="col-md-10">
+            <input id="inputName" type="text" name="inputName" placeholder="Name" >
+          </div>
+        </div>
+        <div class="content row">
+          <div class="col-md-2 title">
+            <h4>Content : </h4>
+          </div>
+          <div class="col-md-10">
+            <textarea id="inputContent" name="inputContent" placeholder="Content"></textarea>
+          </div>
+        </div>
+      </form>
+      <button class="addBtn" name="addBtn" type="submit" on-click='add'>Add</button>
+
+      <div id="messageList" class="center-block">
+        <table class="MSBoard">
+          <tr>
+            <th class="text-center indexCol">Index</th>
+            <th class="text-center nameCol">Name</th>
+            <th class="text-left contentCol">Message Content</th>
+          </tr>
+          {{#each messageTotalContent:num}}
+            <tr>
+              <td class="text-center indexCol">{{num+1}}</td>
+              <td class="text-center nameCol">{{name}}</td>
+              <td class="text-justify contentCol">{{content}}</td>
+              <td>
+                <button class="editBtn" name="editBtn" value="{{key}}" on-click='edit:{{name}},{{key}}'>Edit</button>
+                <button class="deleteBtn" name="deleteBtn" value="{{key}}" on-click='delete:{{key}}'>Delete</button>
+              </td>
+            </tr>
+          {{/each}}
+        </table>
+      </div>
+    </script>
+
+    <script type="text/javascript">
+    // Construct a empty database to store
+      var messageboardDB = new Firebase("https://chunmessageboard.firebaseio.com/");
+
+      messageboardDB.on("value", function(snapshot){
+        var messageListDB = snapshot.val(); // name content
+        var messageList = new Array;  // name content key
+
+        for(var i in messageListDB){
+          var temp = new Object;
+          temp.name = messageListDB[i].name;
+          temp.content = messageListDB[i].content;
+          temp.key = i;
+          messageList.push(temp);
+        }
+
+        var ractive = new Ractive({
+          el: "#page",
+          template: "#MSB_template",
+          data: {
+            messageTotalContent:messageList
+          }
+        });
+
+        ractive.on("add", function(event){
+          var newMessage = new Object;
+          newMessage.name = $("#inputName").val();
+          newMessage.content = $("#inputContent").val();
+          messageboardDB.push(newMessage);
+        });
+
+        ractive.on("edit", function(event, name, key){
+          var editMessage = new Firebase("https://chunmessageboard.firebaseio.com/" + key)
+          var editContent = prompt("Content edit");
+          editMessage.set({name:name,content:editContent});
+        });
+
+        ractive.on("delete", function(event, key){
+          var deleteMessage = new Firebase("https://chunmessageboard.firebaseio.com/" + key)
+          deleteMessage.remove();
+        });
+      })
+    </script>
+  </body>
+</html>
