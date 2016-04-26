@@ -51,8 +51,8 @@
               <td class="text-center nameCol">{{name}}</td>
               <td class="text-justify contentCol">{{content}}</td>
               <td>
-                <button class="editBtn" name="editBtn" value="{{key}}" on-click='edit:{{name}},{{key}}'>Edit</button>
-                <button class="deleteBtn" name="deleteBtn" value="{{key}}" on-click='delete:{{key}}'>Delete</button>
+                <button class="editBtn" name="editBtn" value="{{key}}" on-click='edit:{{name}}'>Edit</button>
+                <button class="deleteBtn" name="deleteBtn" value="{{key}}" on-click='delete:{{name}}'>Delete</button>
               </td>
             </tr>
           {{/each}}
@@ -63,45 +63,69 @@
     <script type="text/javascript">
     // Construct a empty database to store
       var messageboardDB = new Firebase("https://chunmessageboard.firebaseio.com/");
+      var messageList = new Array;  // outside DB array
+    //  var showList = new Array;
 
-      messageboardDB.on("value", function(snapshot){
-        var messageListDB = snapshot.val(); // name content
-        var messageList = new Array;  // name content key
+      var ractive = new Ractive({
+        el: "#page",
+        template: "#MSB_template",
+        data: {
+          messageTotalContent:messageList
+        }
+      });
+
+      messageboardDB.once("value", function(snapshot) {
+        var messageListDB = snapshot.val(); // DB array
 
         for(var i in messageListDB){
           var temp = new Object;
           temp.name = messageListDB[i].name;
           temp.content = messageListDB[i].content;
-          temp.key = i;
           messageList.push(temp);
         }
+      });
 
-        var ractive = new Ractive({
-          el: "#page",
-          template: "#MSB_template",
-          data: {
-            messageTotalContent:messageList
+      ractive.on("add", function(event) {
+        var addMessage = new Firebase("https://chunmessageboard.firebaseio.com/")
+        var newMessage = new Object;
+
+        newMessage.name = $("#inputName").val();
+        newMessage.content = $("#inputContent").val();
+        messageList.push(newMessage); // add to array
+        addMessage.set(messageList); // add to DB
+        $("#inputName").val(""); // clear input
+        $("#inputContent").val(""); // clear textarea
+      });
+
+      ractive.on("edit", function(event, name) {
+        var editContent = prompt("Content edit");
+        var index = findIndex(name);
+
+        // edit data in DB
+        var editMessage = new Firebase('https://chunmessageboard.firebaseio.com/' + index);
+        editMessage.set({name:name,content:editContent});
+        // edit data in array
+        messageList[index].content = editContent;
+        // reset ractive
+        ractive.set('messageTotalContent', messageList);
+      });
+
+      ractive.on("delete", function(event, name) {
+        var index = findIndex(name);
+        var deleteMessage = new Firebase("https://chunmessageboard.firebaseio.com/" + index)
+
+        deleteMessage.remove(); // remove data in DB
+        messageList.splice(index, 1); // remove data from array
+      });
+
+      // find index of data in array to be as key
+      function findIndex(name) {
+        for(var i in messageList) {
+          if(messageList[i].name === name) {
+            return i;
           }
-        });
-
-        ractive.on("add", function(event){
-          var newMessage = new Object;
-          newMessage.name = $("#inputName").val();
-          newMessage.content = $("#inputContent").val();
-          messageboardDB.push(newMessage);
-        });
-
-        ractive.on("edit", function(event, name, key){
-          var editMessage = new Firebase("https://chunmessageboard.firebaseio.com/" + key)
-          var editContent = prompt("Content edit");
-          editMessage.set({name:name,content:editContent});
-        });
-
-        ractive.on("delete", function(event, key){
-          var deleteMessage = new Firebase("https://chunmessageboard.firebaseio.com/" + key)
-          deleteMessage.remove();
-        });
-      })
+        }
+      }
     </script>
   </body>
 </html>
